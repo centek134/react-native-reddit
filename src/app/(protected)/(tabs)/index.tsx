@@ -9,5 +9,5 @@ export default function HomeScreen (){
         <View>
             <FlatList data={posts} renderItem={({item}) => <PostListItem post={item}/>}/>
         </View>
-    )
+    );
 };

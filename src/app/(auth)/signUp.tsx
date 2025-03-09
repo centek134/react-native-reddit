@@ -1,5 +1,5 @@
 import React, {useState} from "react"
-import { Text, TextInput, Button, View } from "react-native"
+import { Text, TextInput, Button, View, StyleSheet, KeyboardAvoidingView, Platform } from "react-native"
 import { useSignUp } from "@clerk/clerk-expo"
 import { useRouter } from "expo-router"
 
@@ -8,6 +8,7 @@ export default function SignUpScreen() {
   const router = useRouter()
 
   const [emailAddress, setEmailAddress] = useState("")
+  const [username, setUsername] = useState("")
   const [password, setPassword] = useState("")
   const [pendingVerification, setPendingVerification] = useState(false)
   const [code, setCode] = useState("")
@@ -65,36 +66,74 @@ export default function SignUpScreen() {
 
   if (pendingVerification) {
     return (
-      <>
-        <Text>Verify your email</Text>
+      <KeyboardAvoidingView style={styles.container} behavior={Platform.OS === "ios" ? "padding" : undefined}>
+        <Text style={styles.title}>Verify Your Email</Text>
         <TextInput
+          style={styles.input}
           value={code}
           placeholder="Enter your verification code"
-          onChangeText={(code) => setCode(code)}
+          placeholderTextColor="#aaa"
+          onChangeText={setCode}
         />
         <Button title="Verify" onPress={onVerifyPress} />
-      </>
+      </KeyboardAvoidingView>
     )
   }
 
   return (
-    <View>
-      <>
-        <Text>Sign up</Text>
-        <TextInput
-          autoCapitalize="none"
-          value={emailAddress}
-          placeholder="Enter email"
-          onChangeText={(email) => setEmailAddress(email)}
-        />
-        <TextInput
-          value={password}
-          placeholder="Enter password"
-          secureTextEntry={true}
-          onChangeText={(password) => setPassword(password)}
-        />
-        <Button title="Continue" onPress={onSignUpPress} />
-      </>
-    </View>
+    <KeyboardAvoidingView style={styles.container} behavior={Platform.OS === "ios" ? "padding" : undefined}>
+      <Text style={styles.title}>Sign Up</Text>
+      <TextInput
+        style={styles.input}
+        autoCapitalize="none"
+        value={emailAddress}
+        placeholder="Enter email"
+        placeholderTextColor="#aaa"
+        onChangeText={setEmailAddress}
+      />
+      <TextInput
+        style={styles.input}
+        autoCapitalize="none"
+        value={username}
+        placeholder="Username"
+        placeholderTextColor="#aaa"
+        onChangeText={setUsername}
+      />
+      <TextInput
+        style={styles.input}
+        value={password}
+        placeholder="Enter password"
+        placeholderTextColor="#aaa"
+        secureTextEntry
+        onChangeText={setPassword}
+      />
+      <Button title="Continue" onPress={onSignUpPress} />
+    </KeyboardAvoidingView>
   )
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    padding: 20,
+    backgroundColor: "#f8f9fa",
+  },
+  title: {
+    fontSize: 24,
+    fontWeight: "bold",
+    marginBottom: 20,
+    color: "black",
+  },
+  input: {
+    width: "100%",
+    height: 50,
+    borderWidth: 1,
+    borderColor: "lightgrey",
+    borderRadius: 10,
+    paddingHorizontal: 10,
+    marginBottom: 15,
+    backgroundColor: "white",
+  },
+});
