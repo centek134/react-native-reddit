@@ -3,11 +3,20 @@ import React, { useState } from "react";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import { router } from "expo-router";
 import groups from "../../../assets/data/groups.json";
+import { selectedGroup } from "../../atoms";
+import { useSetAtom } from "jotai";
+import { Group } from "../../types";
 
 export default function GroupSelector() {
 
     const [searchValue, setSearchValue] = useState<string>("");
     const filteredGroups = groups.filter((group) => group.name.toLowerCase().includes(searchValue.toLowerCase()));
+    const setGroup = useSetAtom(selectedGroup);
+
+    const onGroupSelected = (group: Group) => {
+      setGroup(group);
+      router.back();
+    }
 
   return (
     <SafeAreaView style={{ paddingHorizontal: 10, flex: 1}}>
@@ -24,8 +33,8 @@ export default function GroupSelector() {
         )}
       </View>
       <FlatList scrollEnabled data={filteredGroups} renderItem={({item}) => (
-        <Pressable style={{ flexDirection:"row", gap: 5, alignItems: "center", marginBottom: 20}}>
-            <Image src={item.image} style={{ width: 40, aspectRatio: 1, borderRadius: 20}}/>
+        <Pressable style={styles.groupContainer} onPress={() => onGroupSelected(item)}>
+            <Image style={styles.groupImage} src={item.image}/>
             <Text>{item.name}</Text>
         </Pressable>
       )}/>
@@ -46,5 +55,16 @@ const styles = StyleSheet.create({
         alignItems: "center",
         marginVertical: 10,
         paddingHorizontal: 5
+    },
+    groupContainer: {
+      flexDirection:"row",
+      gap: 5,
+      alignItems: "center",
+      marginBottom: 20
+    },
+    groupImage: {
+      width: 40,
+      aspectRatio: 1,
+      borderRadius: 20
     }
 })
